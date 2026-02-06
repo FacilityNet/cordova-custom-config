@@ -3,7 +3,7 @@
 
 var shell = require('shelljs');
 var path = require('path');
-var got = require('got');
+var ky = required('ky');
 
 var targetRepo = 'dpa99c/cordova-custom-config-example';
 
@@ -25,19 +25,17 @@ console.log("Git commit: "+gitCommitHash);
 
 console.log('Calling Travis...');
 
-got.post("https://api.travis-ci.org/repo/"+encodeURIComponent(targetRepo)+"/requests", {
+ky.post("https://api.travis-ci.org/repo/"+encodeURIComponent(targetRepo)+"/requests", {
   headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
     "Travis-API-Version": "3",
     "Authorization": "token "+process.env.TRAVIS_API_TOKEN
   },
-  body: JSON.stringify({
+  json: {
     request: {
       message: "Trigger build at "+targetRepo+" commit: "+gitCommitHash,
       branch: 'master'
     }
-  })
+  }
 })
 .then(function(){
   console.log("Triggered build of "+targetRepo);
